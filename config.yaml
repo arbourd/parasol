@@ -11,4 +11,8 @@ run_cmd:
   - mkdir -p /media/storage
 
 k3os:
+  k3s_args:
+    - server
+    - '--disable-helm-controller'
+
   password: $1$3xexhKLX$ko7rThERFqzCWGwI7h1m40
