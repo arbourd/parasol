@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: pihole
+  namespace: pihole
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: pihole
+      version: 2.5.2
+      sourceRef:
+        kind: HelmRepository
+        name: mojo2600
+        namespace: pihole
+      interval: 5m
+  values:
+    DNS1: "1.1.1.1"
+    DNS2: "8.8.8.8"
+
+    persistentVolumeClaim:
+      enabled: true
+
+    serviceDns:
+      type: NodePort
+
+    serviceWeb:
+      type: NodePort
