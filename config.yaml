@@ -17,7 +17,11 @@ k3os:
   k3s_args:
     - server
     - "--disable"
+    - servicelb
+    - "--disable"
     - traefik
     # v1.22.2+k3s1
     # - "--disable-helm-controller"
+  labels:
+    k3os.io/upgrade: enabled
   password: $1$3xexhKLX$ko7rThERFqzCWGwI7h1m40
