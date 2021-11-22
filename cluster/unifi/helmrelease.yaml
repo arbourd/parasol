@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
-        namespace: k8s-at-home
+        namespace: shared
       interval: 5m
   values:
     mongodb:
