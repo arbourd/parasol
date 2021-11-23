@@ -18,6 +18,21 @@ spec:
     DNS1: "1.1.1.1"
     DNS2: "8.8.8.8"
 
+    ingress:
+      enabled: true
+
+      ingressClassName: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-production"
+
+      hosts:
+        - pihole.${domain}
+
+      tls:
+       - secretName: pihole-tls
+         hosts:
+           - pihole.${domain}
+
     persistentVolumeClaim:
       enabled: true
 
