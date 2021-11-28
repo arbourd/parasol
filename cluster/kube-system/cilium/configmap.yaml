@@ -4,20 +4,11 @@ metadata:
   name: bgp-config
   namespace: kube-system
 data:
-  # Must be run on USG/USM
-  #   configure
-  #   set protocols bgp 64501 parameters router-id 192.168.1.1
-  #   set protocols bgp 64501 neighbor 192.168.1.6 remote-as 64500
-  #   show protocols bgp
-  #   commit
-  #   save
-  #   exit
-  #   show ip bgp
   config.yaml: |
     peers:
-      - peer-address: 192.168.1.1
-        peer-asn: 64501
-        my-asn: 64500
+      - peer-address: ${gateway_ip}
+        peer-asn: ${gateway_asn_peer}
+        my-asn: ${gateway_asn}
     address-pools:
       - name: default
         protocol: bgp

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+data:
+  config.gateway.json: |
+    {
+      "protocols": {
+        "bgp": {
+          "${gateway_asn_peer}": {
+            "neighbor": {
+              "${node_ip}": { "remote-as": "${gateway_asn}" }
+            },
+            "parameters": {
+              "router-id": "${gateway_ip}"
+            }
+          }
+        }
+      }
+    }
