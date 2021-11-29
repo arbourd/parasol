@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: cluster
 data:
-  node_ip: "192.168.1.10"
+  node0_ip: "192.168.1.10"
 
   gateway_ip: "192.168.1.1"
   gateway_asn: "64500"

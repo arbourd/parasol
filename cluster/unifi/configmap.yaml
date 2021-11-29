@@ -9,7 +9,7 @@ data:
         "bgp": {
           "${gateway_asn_peer}": {
             "neighbor": {
-              "${node_ip}": { "remote-as": "${gateway_asn}" }
+              "${node0_ip}": { "remote-as": "${gateway_asn}" }
             },
             "parameters": {
               "router-id": "${gateway_ip}"

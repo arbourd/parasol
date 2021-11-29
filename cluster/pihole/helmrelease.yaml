@@ -18,6 +18,17 @@ spec:
     DNS1: "1.1.1.1"
     DNS2: "8.8.8.8"
 
+    serviceDns:
+      type: LoadBalancer
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: dns.${domain}
+      externalTrafficPolicy: Local
+
+      mixedService: true
+
+    serviceDhcp:
+      enabled: false
+
     ingress:
       enabled: true
 
@@ -35,9 +46,3 @@ spec:
 
     persistentVolumeClaim:
       enabled: true
-
-    serviceDns:
-      type: LoadBalancer
-
-    serviceWeb:
-      type: LoadBalancer
