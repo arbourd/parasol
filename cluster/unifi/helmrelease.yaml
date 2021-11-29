@@ -23,6 +23,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/hostname: ubnt.${domain}
         externalTrafficPolicy: Local
+        loadBalancerIP: "${ubnt_ip}"
 
     ingress:
       main:

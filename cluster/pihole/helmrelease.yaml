@@ -16,13 +16,14 @@ spec:
       interval: 5m
   values:
     DNS1: "1.1.1.1"
-    DNS2: "8.8.8.8"
+    DNS2: "1.0.0.1"
 
     serviceDns:
       type: LoadBalancer
       annotations:
         external-dns.alpha.kubernetes.io/hostname: dns.${domain}
       externalTrafficPolicy: Local
+      loadBalancerIP: "${dns_ip}"
 
       mixedService: true
 

@@ -5,6 +5,9 @@ metadata:
 data:
   node0_ip: "192.168.1.10"
 
+  ubnt_ip: "192.168.8.10"
+  dns_ip: "192.168.8.11"
+
   gateway_ip: "192.168.1.1"
   gateway_asn: "64500"
   gateway_asn_peer: "64501"
