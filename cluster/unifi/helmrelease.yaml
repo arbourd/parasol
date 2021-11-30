@@ -50,7 +50,7 @@ spec:
         type: custom
         volumeSpec:
           configMap:
-            name: config
+            name: gateway-config
         subPath:
           - path: config.gateway.json
             mountPath: /config/config.gateway.json
