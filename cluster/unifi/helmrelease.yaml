@@ -14,9 +14,6 @@ spec:
         namespace: shared
       interval: 5m
   values:
-    image:
-      tag: v6.5.55
-
     service:
       main:
         type: LoadBalancer
