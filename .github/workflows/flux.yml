@@ -1,0 +1,33 @@
+name: flux
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: fluxcd/flux2/action@main
+
+      - name: Check for updates
+        id: version
+        run: |
+          flux install \
+            --export > ./cluster/flux-system/gotk-components.yaml
+
+          echo "::set-output name=flux::$(flux -v | grep -oP '[\d\.]+$')"
+          echo "::set-output name=gotk::$(flux version)"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          branch: flux-${{ steps.version.outputs.flux }}
+          commit-message: flux v${{ steps.version.outputs.flux }}
+          title: flux v${{ steps.version.outputs.flux }}
+          body: |
+            ${{ steps.version.outputs.gotk }}
+          token: ${{ secrets.GITHUB_TOKEN }}
