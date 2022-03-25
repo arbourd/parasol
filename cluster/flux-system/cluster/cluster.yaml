@@ -17,7 +17,7 @@ spec:
       - kind: Secret
         name: cluster
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta1
+apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
   name: cluster

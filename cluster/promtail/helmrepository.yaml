@@ -1,7 +1,8 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: jetstack
+  name: grafana
+  namespace: promtail
 spec:
-  url: https://charts.jetstack.io/
+  url: https://grafana.github.io/helm-charts/
   interval: 10m

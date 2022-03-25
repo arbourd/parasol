@@ -11,7 +11,7 @@ spec:
     kind: GitRepository
     name: flux-system
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta1
+apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
   name: flux-system
