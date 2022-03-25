@@ -16,8 +16,18 @@ spec:
       interval: 5m
   values:
     config:
-<<<<<<< HEAD
       lokiAddress: https://logs-prod3.grafana.net/api/prom/push
-=======
-      lokiAddress: https://185974:eyJrIjoiMTExMDE1OWZjMzFhOTIxMzcwMGI3N2UzOTk4OTExNDE5YTIyNDc4YyIsIm4iOiJwYXJhc29sIiwiaWQiOjYyMTY4NH0=@logs-prod3.grafana.net/api/prom/push
->>>>>>> 69603d3 (Upgrade sources)
+      snippets:
+        extraClientConfigs: |
+          basic_auth:
+            username: 185974
+            password_file: /etc/grafana/password
+
+    extraVolumeMounts:
+      - name: password
+        mountPath: /etc/grafana
+
+    extraVolumes:
+      - name: password
+        secret:
+          secretName: grafana-cloud
