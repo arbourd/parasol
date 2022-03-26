@@ -1,0 +1,7 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: mojo2600
+spec:
+  url: https://mojo2600.github.io/pihole-kubernetes/
+  interval: 10m
