@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: bitnami
-        namespace: shared
+        namespace: flux-system
       interval: 5m
   values:
     provider: cloudflare

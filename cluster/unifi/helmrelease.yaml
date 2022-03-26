@@ -11,7 +11,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: k8s-at-home
-        namespace: shared
+        namespace: flux-system
       interval: 5m
   values:
     service:
