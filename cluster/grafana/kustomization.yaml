@@ -1,0 +1,46 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: grafana
+resources:
+  - https://raw.githubusercontent.com/grafana/agent/v0.23.0/production/kubernetes/agent-bare.yaml
+  - https://raw.githubusercontent.com/grafana/agent/v0.23.0/production/kubernetes/agent-loki.yaml
+  - config.yaml
+  - helmrelease.yaml
+  - namespace.yaml
+  - sealed-secret.yaml
+
+patchesJson6902:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: grafana-agent
+    patch: |-
+      - op: add
+        path: "/spec/template/spec/volumes/1"
+        value:
+          name: password
+          secret:
+            secretName: grafana-cloud
+      - op: add
+        path: "/spec/template/spec/containers/0/volumeMounts/1"
+        value:
+          mountPath: /etc/grafana
+          name: password
+  - target:
+      group: apps
+      version: v1
+      kind: DaemonSet
+      name: grafana-agent-logs
+    patch: |-
+      - op: add
+        path: "/spec/template/spec/volumes/1"
+        value:
+          name: password
+          secret:
+            secretName: grafana-cloud
+      - op: add
+        path: "/spec/template/spec/containers/0/volumeMounts/1"
+        value:
+          mountPath: /etc/grafana
+          name: password
