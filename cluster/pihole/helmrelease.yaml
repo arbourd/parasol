@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: mojo2600
-        namespace: pihole
+        namespace: flux-system
       interval: 5m
   values:
     DNS1: "1.1.1.1"
