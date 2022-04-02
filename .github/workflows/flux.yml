@@ -20,7 +20,7 @@ jobs:
           echo "::set-output name=version::$(flux -v | grep -oP '[\d\.]+$')"
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         with:
           branch: flux-${{ steps.flux.outputs.version }}
           commit-message: flux v${{ steps.flux.outputs.version }}
