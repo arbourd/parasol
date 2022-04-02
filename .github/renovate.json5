@@ -1,5 +1,5 @@
 {
-  enabledManagers: ["flux", "helm-values"],
+  enabledManagers: ["flux", "github-actions", "helm-values"],
   flux: {
     fileMatch: ["^cluster/.+\\.yaml$"],
   },
