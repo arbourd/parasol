@@ -44,7 +44,7 @@ spec:
         existingClaim: cache
 
       media:
-        enabled: false
-
+        enabled: true
+        type: hostPath
+        hostPath: /media/storage
         mountPath: /media
-

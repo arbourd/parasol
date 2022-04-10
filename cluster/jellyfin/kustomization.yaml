@@ -4,5 +4,4 @@ namespace: jellyfin
 resources:
   - helmrelease.yaml
   - namespace.yaml
-  # - pv.yaml
   - pvc.yaml
