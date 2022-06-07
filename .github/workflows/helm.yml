@@ -39,20 +39,12 @@ jobs:
 
       - uses: azure/setup-helm@v1
         with:
-          version: v3.6.3
-
-      - name: Download diff script
-        run: |
-          mkdir -p lib
-          curl https://raw.githubusercontent.com/bjw-s/home-ops/main/.github/scripts/helm-release-differ.sh -o diff.sh
-          curl https://raw.githubusercontent.com/bjw-s/home-ops/main/.github/scripts/lib/functions.sh -o lib/functions1.sh
-          cat lib/functions1.sh | sed "s/\-iname '\*-charts.yaml'/\-path '\*\/helmrepositories\/\*\.yaml'/" > lib/functions.sh
-          chmod +x diff.sh lib/functions.sh
+          version: v3.9.0
 
       - name: Run diff
         id: diff
         run: |
-          diff=$(./diff.sh --source-file "main/${{ matrix.file }}" --target-file "${{ matrix.file }}" --remove-common-labels)
+          diff=$(./diff.sh --source-file "main/${{ matrix.file }}" --target-file "${{ matrix.file }}" --helmrepositories-path "./cluster/flux-system/helmrepositories/*.yaml" --remove-common-labels)
           echo "${diff}"
           diff="${diff//'%'/'%25'}"
           diff="${diff//$'\n'/'%0A'}"
