@@ -2,8 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: grafana
 resources:
-  - https://raw.githubusercontent.com/grafana/agent/v0.23.0/production/kubernetes/agent-bare.yaml
-  - https://raw.githubusercontent.com/grafana/agent/v0.23.0/production/kubernetes/agent-loki.yaml
+  - https://raw.githubusercontent.com/grafana/agent/v0.25.1/production/kubernetes/agent-bare.yaml
+  - https://raw.githubusercontent.com/grafana/agent/v0.25.1/production/kubernetes/agent-loki.yaml
   - configmap.yaml
   - helmrelease.yaml
   - namespace.yaml
@@ -13,7 +13,7 @@ patchesJson6902:
   - target:
       group: apps
       version: v1
-      kind: Deployment
+      kind: StatefulSet
       name: grafana-agent
     patch: |-
       - op: add
