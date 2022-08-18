@@ -19,6 +19,7 @@ spec:
       enabled: true
       announce:
         loadbalancerIP: true
+        podCIDR: true
 
     containerRuntime:
       integration: containerd

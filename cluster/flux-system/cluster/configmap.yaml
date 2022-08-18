@@ -3,9 +3,6 @@ kind: ConfigMap
 metadata:
   name: cluster
 data:
-  node0_ip: "192.168.1.10"
-
-  ubnt_ip: "192.168.8.10"
   dns_ip: "192.168.8.11"
 
   gateway_ip: "192.168.1.1"
