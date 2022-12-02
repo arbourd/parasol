@@ -46,10 +46,9 @@ jobs:
         run: |
           diff=$(./diff.sh --source-file "main/${{ matrix.file }}" --target-file "${{ matrix.file }}" --helmrepositories-path "./cluster/flux-system/helmrepositories/*.yaml" --remove-common-labels)
           echo "${diff}"
-          diff="${diff//'%'/'%25'}"
-          diff="${diff//$'\n'/'%0A'}"
-          diff="${diff//$'\r'/'%0D'}"
-          echo "diff=${diff}" >> $GITHUB_OUTPUT
+          echo "diff<<EOF" >> $GITHUB_OUTPUT
+          echo "${diff}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - uses: peter-evans/find-comment@v2
         id: find-comment
