@@ -57,7 +57,7 @@ jobs:
           comment-author: "github-actions[bot]"
           body-includes: helmrelease.yaml
 
-      - uses: peter-evans/create-or-update-comment@v2
+      - uses: peter-evans/create-or-update-comment@v3
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           comment-id: "${{ steps.find-comment.outputs.comment-id }}"
