@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: kube-state-metrics
-      version: 5.5.0
+      version: 5.6.1
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
