@@ -1,0 +1,6 @@
+variant: flatcar
+version: 1.1.0
+passwd:
+  users:
+    - name: core
+      password_hash: $1$3xexhKLX$ko7rThERFqzCWGwI7h1m40

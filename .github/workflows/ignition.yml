@@ -1,0 +1,20 @@
+name: ignition
+
+on:
+  pull_request:
+    paths:
+      - butane.yaml
+  push:
+    branches:
+      - main
+    paths:
+      - butane.yaml
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: butane -c --strict
+        run: cat butane.yaml | docker run --rm -i quay.io/coreos/butane:latest -c --strict
