@@ -83,7 +83,7 @@ storage:
       mode: 0755
 systemd:
   units:
-    - name: "setup-nomad.service"
+    - name: "extract-nomad.service"
       enabled: true
       contents: |
         [Unit]
@@ -105,9 +105,9 @@ systemd:
         [Unit]
         Description=Nomad
         Documentation=https://www.nomadproject.io/docs/
-        After=network-online.target setup-nomad.service
+        After=network-online.target extract-nomad.service
         Wants=network-online.target
-        Requires=setup-nomad.service
+        Requires=extract-nomad.service
 
         [Service]
         User=root
@@ -125,7 +125,7 @@ systemd:
 
         [Install]
         WantedBy=multi-user.target
-    - name: "setup-waypoint.service"
+    - name: "extract-waypoint.service"
       enabled: true
       contents: |
         [Unit]
@@ -157,7 +157,8 @@ systemd:
         Restart=on-failure
         RemainAfterExit=yes
         StartLimitBurst=100
-        ExecStart=/opt/bin/waypoint install -accept-tos -plain -platform=nomad -nomad-host-volume=scratch -nomad-service-provider=nomad
+        ExecStart=/opt/bin/waypoint context create -server-addr=api.hashicorp.cloud:443 -server-auth-token=$(cat hcp-auth-token) -server-require-auth=true -server-platform="hcp" -set-default hcp-common-parasol
+        ExecStart=/opt/bin/waypoint runner install -platform=nomad -server-addr=api.hashicorp.cloud:443 -nomad-runner-image=hashicorp/waypoint -nomad-host-volume=scratch
 
         [Install]
         WantedBy=multi-user.target
