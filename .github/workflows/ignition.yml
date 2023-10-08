@@ -23,4 +23,4 @@ jobs:
       - name: butane > ignition.json
         run: cat butane.yaml | docker run --rm -i quay.io/coreos/butane:latest > ignition.json
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@v5
