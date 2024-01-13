@@ -1,17 +1,12 @@
-name: ignition
+name: butane
 
 on:
   pull_request:
     paths:
       - butane.yaml
-  push:
-    branches:
-      - main
-    paths:
-      - butane.yaml
 
 jobs:
-  translate:
+  ignite:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,3 +19,6 @@ jobs:
         run: cat butane.yaml | docker run --rm -i quay.io/coreos/butane:latest > ignition.json
 
       - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Update ignition.json
+          file_pattern: ignition.json
