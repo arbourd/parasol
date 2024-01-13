@@ -1,3 +1,4 @@
+# sudo flatcar-reset --keep-machine-id --keep-paths '/etc/ssh/ssh_host_.*' /var/log /opt/secrets
 variant: flatcar
 version: 1.1.0
 passwd:
@@ -53,9 +54,9 @@ storage:
           # Using regular users in combination with /bin/su or /usr/bin/sudo ensure a clear audit track.
           PermitRootLogin No
     # Nomad
-    - path: /opt/bin/nomad_1.5.6_linux_amd64.zip
+    - path: /opt/bin/nomad_1.7.2_linux_amd64.zip
       contents:
-        source: https://releases.hashicorp.com/nomad/1.5.6/nomad_1.5.6_linux_amd64.zip
+        source: https://releases.hashicorp.com/nomad/1.7.2/nomad_1.7.2_linux_amd64.zip
       mode: 0755
     - path: /etc/nomad.d/nomad.hcl
       contents:
@@ -76,11 +77,6 @@ storage:
             }
           }
       mode: 0755
-    # Nomad
-    - path: /opt/waypoint_0.11.1_linux_amd64.zip
-      contents:
-        source: https://releases.hashicorp.com/waypoint/0.11.1/waypoint_0.11.1_linux_amd64.zip
-      mode: 0755
 systemd:
   units:
     - name: "extract-nomad.service"
@@ -94,8 +90,8 @@ systemd:
         Type=oneshot
         Restart=on-failure
         RemainAfterExit=yes
-        ExecStart=/usr/bin/unzip "/opt/bin/nomad_1.5.6_linux_amd64.zip" -d /opt/bin
-        ExecStart=/usr/bin/rm "/opt/bin/nomad_1.5.6_linux_amd64.zip"
+        ExecStart=/usr/bin/unzip "/opt/bin/nomad_1.7.2_linux_amd64.zip" -d /opt/bin
+        ExecStart=/usr/bin/rm "/opt/bin/nomad_1.7.2_linux_amd64.zip"
 
         [Install]
         WantedBy=multi-user.target
@@ -122,43 +118,6 @@ systemd:
         ExecReload=/bin/kill -HUP $MAINPID
         ExecStartPre=/opt/bin/nomad config validate /etc/nomad.d/
         ExecStart=/opt/bin/nomad agent -config /etc/nomad.d
-
-        [Install]
-        WantedBy=multi-user.target
-    - name: "extract-waypoint.service"
-      enabled: true
-      contents: |
-        [Unit]
-        Description=Unpack Waypoint binary to /opt/bin
-        ConditionPathExists=!/opt/bin/waypoint
-
-        [Service]
-        Type=oneshot
-        User=root
-        Restart=on-failure
-        RemainAfterExit=yes
-        ExecStart=/usr/bin/unzip "/opt/waypoint_0.11.1_linux_amd64.zip" -d /opt/bin
-        ExecStart=/usr/bin/rm "/opt/waypoint_0.11.1_linux_amd64.zip"
-
-        [Install]
-        WantedBy=multi-user.target
-    - name: "install-waypoint.service"
-      enabled: true
-      contents: |
-        [Unit]
-        Description=Install Waypoint
-        After=network-online.target nomad.service
-        Wants=network-online.target
-        Requires=nomad.service
-
-        [Service]
-        Type=oneshot
-        User=root
-        Restart=on-failure
-        RemainAfterExit=yes
-        StartLimitBurst=100
-        ExecStart=/opt/bin/waypoint context create -server-addr=api.hashicorp.cloud:443 -server-auth-token=$(cat hcp-auth-token) -server-require-auth=true -server-platform="hcp" -set-default hcp-common-parasol
-        ExecStart=/opt/bin/waypoint runner install -platform=nomad -server-addr=api.hashicorp.cloud:443 -nomad-runner-image=hashicorp/waypoint -nomad-host-volume=scratch
 
         [Install]
         WantedBy=multi-user.target
