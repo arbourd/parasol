@@ -1,0 +1,26 @@
+#cloud-config
+
+hostname: parasol
+
+users:
+  - name: core
+    ssh_authorized_keys:
+      - github:arbourd
+
+k3s:
+  enabled: true
+  args:
+    - --disable-helm-controller
+    - --disable=servicelb
+    - --disable=traefik
+    # - --node-name=parasol-0
+
+run_cmd:
+  - mkdir -p /media/storage
+
+# write_files:
+#   - path: /etc/fstab
+#     content: |-
+#       /dev/cdrom                                /media/cdrom    iso9660 noauto,ro 0 0
+#       /dev/usbdisk                              /media/usb      vfat    noauto,ro 0 0
+#       UUID=449e264a-0402-4db3-8c2e-c86b22c75050 /media/storage  ext4    nosuid,nodev,nofail 0 0
