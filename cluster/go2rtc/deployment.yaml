@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doorbell
+  namespace: go2rtc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doorbell
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: doorbell
+    spec:
+      hostNetwork: true
+      containers:
+        - name: go2rtc
+          image: alexxit/go2rtc:1.9.14
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: config
+              mountPath: /config/go2rtc.yaml
+              subPath: doorbell.yaml
+      volumes:
+        - name: config
+          configMap:
+            name: config

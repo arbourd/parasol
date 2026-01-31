@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+  namespace: go2rtc
+data:
+  doorbell.yaml: |
+    streams:
+      doorbell: rtsp://10.128.3.45:554/PJRJMH
+
+    onvif:
+      username: "admin"
+      password: "admin"
+
+    ffmpeg:
+      bin: ffmpeg
