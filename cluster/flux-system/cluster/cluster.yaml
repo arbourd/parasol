@@ -1,0 +1,29 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cluster
+spec:
+  interval: 10m0s
+  path: ./cluster
+  prune: false
+  sourceRef:
+    kind: GitRepository
+    name: cluster
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: cluster
+spec:
+  interval: 1m0s
+  ref:
+    branch: main
+  secretRef:
+    name: flux-system
+  url: ssh://git@github.com/arbourd/parasol
+  ignore: |
+    /**
+    !/cluster
+    !/cluster/**
+    /cluster/flux-system/**
