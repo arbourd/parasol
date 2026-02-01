@@ -1,0 +1,37 @@
+clusterName: parasol
+talosVersion: v1.12.2
+kubernetesVersion: v1.35.0
+endpoint: https://10.128.1.140:6443
+
+nodes:
+  - hostname: node-01
+    ipAddress: 10.128.1.140
+    installDisk: /dev/nvme0n1
+    controlPlane: true
+    schematic:
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/i915
+            - siderolabs/intel-ice-firmware
+            - siderolabs/intel-ucode
+            - siderolabs/iscsi-tools
+            - siderolabs/thunderbolt
+
+patches:
+  - |-
+    cluster:
+      allowSchedulingOnControlPlanes: true
+      network:
+        cni:
+          name: none
+      proxy:
+        disabled: true
+    machine:
+      features:
+        hostDNS:
+          enabled: true
+          forwardKubeDNSToHost: false
+        kubePrism:
+          enabled: true
+          port: 7445
