@@ -1,2 +1,2 @@
-gotk-sync.yaml
-secret.yaml
+clusterconfig
+talsecret.sops.yaml
