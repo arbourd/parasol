@@ -1,0 +1,39 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: scrypted
+  namespace: scrypted
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      interval: 5m
+  values:
+    controllers:
+      scrypted:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/koush/scrypted
+              tag: v0.119.2
+            securityContext:
+              privileged: true
+    service:
+      app:
+        controller: scrypted
+        ports:
+          https:
+            port: 10443
+          http:
+            port: 11080
+    persistence:
+      data:
+        type: emptyDir
+        globalMounts:
+          - path: /server/volume
