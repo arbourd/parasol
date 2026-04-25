@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - ./cluster
   - ./helmrepositories
+  - ./ocirepositories
   - flux-system.yaml
   - gotk-components.yaml
