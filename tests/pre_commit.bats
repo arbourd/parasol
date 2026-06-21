@@ -1,6 +1,6 @@
-#!/usr/bin/env zunit
+#!/usr/bin/env bats
 
-@setup {
+setup() {
   HOOK="$PWD/.githooks/pre-commit"
   tmpdir=$(mktemp -d)
 
@@ -10,13 +10,13 @@
   git -C "$tmpdir" commit --allow-empty -m "init" --quiet
 }
 
-@teardown {
+teardown() {
   rm -rf "$tmpdir"
 }
 
 @test 'passes with no staged files' {
-  run zsh -c "GIT_DIR=$tmpdir/.git GIT_WORK_TREE=$tmpdir $HOOK"
-  assert $state equals 0
+  run env GIT_DIR="$tmpdir/.git" GIT_WORK_TREE="$tmpdir" "$HOOK"
+  [ "$status" -eq 0 ]
 }
 
 @test 'passes with non-secret yaml staged' {
@@ -27,8 +27,8 @@ metadata:
   name: test
 EOF
   git -C "$tmpdir" add config.yaml
-  run zsh -c "GIT_DIR=$tmpdir/.git GIT_WORK_TREE=$tmpdir $HOOK"
-  assert $state equals 0
+  run env GIT_DIR="$tmpdir/.git" GIT_WORK_TREE="$tmpdir" "$HOOK"
+  [ "$status" -eq 0 ]
 }
 
 @test 'passes with encrypted secret staged' {
@@ -41,8 +41,8 @@ sops:
   version: 3.0.0
 EOF
   git -C "$tmpdir" add mysecret.sops.yaml
-  run zsh -c "GIT_DIR=$tmpdir/.git GIT_WORK_TREE=$tmpdir $HOOK"
-  assert $state equals 0
+  run env GIT_DIR="$tmpdir/.git" GIT_WORK_TREE="$tmpdir" "$HOOK"
+  [ "$status" -eq 0 ]
 }
 
 @test 'fails when secret is not a sops file' {
@@ -55,8 +55,8 @@ stringData:
   key: value
 EOF
   git -C "$tmpdir" add secret.yaml
-  run zsh -c "GIT_DIR=$tmpdir/.git GIT_WORK_TREE=$tmpdir $HOOK"
-  assert $state equals 1
+  run env GIT_DIR="$tmpdir/.git" GIT_WORK_TREE="$tmpdir" "$HOOK"
+  [ "$status" -eq 1 ]
 }
 
 @test 'fails when sops file is missing encryption metadata' {
@@ -69,6 +69,6 @@ stringData:
   key: plaintext
 EOF
   git -C "$tmpdir" add secret.sops.yaml
-  run zsh -c "GIT_DIR=$tmpdir/.git GIT_WORK_TREE=$tmpdir $HOOK"
-  assert $state equals 1
+  run env GIT_DIR="$tmpdir/.git" GIT_WORK_TREE="$tmpdir" "$HOOK"
+  [ "$status" -eq 1 ]
 }

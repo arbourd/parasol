@@ -1,19 +1,21 @@
-#!/usr/bin/env zsh
-setopt errexit nounset pipefail
+#!/usr/bin/env bash
+set -euo pipefail
 
-local -a staged
-staged=("${(@f)$(git diff --cached --name-only --diff-filter=ACM)}")
+staged=()
+while IFS= read -r file; do
+  staged+=("$file")
+done < <(git diff --cached --name-only --diff-filter=ACM)
 
-for file in $staged; do
+for file in "${staged[@]+"${staged[@]}"}"; do
   [[ $file != *.yaml ]] && continue
 
   if git show ":$file" | grep -q 'kind: Secret'; then
     if [[ $file != *.sops.yaml ]]; then
-      print "ERROR: $file contains 'kind: Secret' but is not encrypted (.sops.yaml)"
+      echo "ERROR: $file contains 'kind: Secret' but is not encrypted (.sops.yaml)"
       exit 1
     fi
     if ! git show ":$file" | grep -q '^sops:'; then
-      print "ERROR: $file looks unencrypted — run: sops --encrypt --in-place $file"
+      echo "ERROR: $file looks unencrypted — run: sops --encrypt --in-place $file"
       exit 1
     fi
   fi
