@@ -1,0 +1,74 @@
+#!/usr/bin/env zunit
+
+@setup {
+  HOOK="$PWD/.githooks/pre-commit"
+  tmpdir=$(mktemp -d)
+
+  git -C "$tmpdir" init --quiet
+  git -C "$tmpdir" config user.email "test@test.com"
+  git -C "$tmpdir" config user.name "Test"
+  git -C "$tmpdir" commit --allow-empty -m "init" --quiet
+}
+
+@teardown {
+  rm -rf "$tmpdir"
+}
+
+@test 'passes with no staged files' {
+  run zsh -c "GIT_DIR=$tmpdir/.git GIT_WORK_TREE=$tmpdir $HOOK"
+  assert $state equals 0
+}
+
+@test 'passes with non-secret yaml staged' {
+  cat > "$tmpdir/config.yaml" <<'EOF'
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test
+EOF
+  git -C "$tmpdir" add config.yaml
+  run zsh -c "GIT_DIR=$tmpdir/.git GIT_WORK_TREE=$tmpdir $HOOK"
+  assert $state equals 0
+}
+
+@test 'passes with encrypted secret staged' {
+  cat > "$tmpdir/mysecret.sops.yaml" <<'EOF'
+apiVersion: v1
+kind: Secret
+metadata:
+  name: test
+sops:
+  version: 3.0.0
+EOF
+  git -C "$tmpdir" add mysecret.sops.yaml
+  run zsh -c "GIT_DIR=$tmpdir/.git GIT_WORK_TREE=$tmpdir $HOOK"
+  assert $state equals 0
+}
+
+@test 'fails when secret is not a sops file' {
+  cat > "$tmpdir/secret.yaml" <<'EOF'
+apiVersion: v1
+kind: Secret
+metadata:
+  name: test
+stringData:
+  key: value
+EOF
+  git -C "$tmpdir" add secret.yaml
+  run zsh -c "GIT_DIR=$tmpdir/.git GIT_WORK_TREE=$tmpdir $HOOK"
+  assert $state equals 1
+}
+
+@test 'fails when sops file is missing encryption metadata' {
+  cat > "$tmpdir/secret.sops.yaml" <<'EOF'
+apiVersion: v1
+kind: Secret
+metadata:
+  name: test
+stringData:
+  key: plaintext
+EOF
+  git -C "$tmpdir" add secret.sops.yaml
+  run zsh -c "GIT_DIR=$tmpdir/.git GIT_WORK_TREE=$tmpdir $HOOK"
+  assert $state equals 1
+}
