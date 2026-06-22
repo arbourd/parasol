@@ -1,5 +1,5 @@
 clusterName: parasol
-talosVersion: v1.12.2
+talosVersion: v1.13.4
 kubernetesVersion: v1.35.0
 endpoint: https://10.128.1.140:6443
 
