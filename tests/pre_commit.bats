@@ -59,6 +59,22 @@ EOF
   [ "$status" -eq 1 ]
 }
 
+@test 'passes when kind Secret appears nested, not at root' {
+  cat > "$tmpdir/config.yaml" <<'EOF'
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test
+data:
+  config.yaml: |
+    kind: Secret
+    name: nested
+EOF
+  git -C "$tmpdir" add config.yaml
+  run env GIT_DIR="$tmpdir/.git" GIT_WORK_TREE="$tmpdir" "$HOOK"
+  [ "$status" -eq 0 ]
+}
+
 @test 'fails when sops file is missing encryption metadata' {
   cat > "$tmpdir/secret.sops.yaml" <<'EOF'
 apiVersion: v1
