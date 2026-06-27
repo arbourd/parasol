@@ -15,6 +15,12 @@ spec:
     provider: sops
     secretRef:
       name: sops-age
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster
+      - kind: Secret
+        name: cluster
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository

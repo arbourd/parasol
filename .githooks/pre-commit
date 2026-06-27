@@ -9,7 +9,7 @@ done < <(git diff --cached --name-only --diff-filter=ACM)
 for file in "${staged[@]+"${staged[@]}"}"; do
   [[ $file != *.yaml ]] && continue
 
-  if git show ":$file" | grep -q 'kind: Secret'; then
+  if git show ":$file" | yq eval '.kind' - 2>/dev/null | grep -q '^Secret$'; then
     if [[ $file != *.sops.yaml ]]; then
       echo "ERROR: $file contains 'kind: Secret' but is not encrypted (.sops.yaml)"
       exit 1
