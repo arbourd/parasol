@@ -33,6 +33,10 @@
       "matchManagers": ["custom.regex"],
       "matchFileNames": ["talconfig.yaml"],
       "groupName": "talconfig"
+    },
+    {
+      "matchPackageNames": ["ghcr.io/koush/scrypted"],
+      "allowedVersions": "/^v\\d+\\.\\d*[13579]\\./"
     }
   ]
 }
