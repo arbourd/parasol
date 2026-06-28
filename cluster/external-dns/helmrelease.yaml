@@ -1,0 +1,58 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-dns
+  namespace: external-dns
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: external-dns
+      version: 1.15.1
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns
+        namespace: flux-system
+      interval: 5m
+  values:
+    provider:
+      name: webhook
+      webhook:
+        image:
+          repository: ghcr.io/home-operations/external-dns-unifi-webhook
+          tag: 0.10.6
+        env:
+          - name: UNIFI_HOST
+            valueFrom:
+              secretKeyRef:
+                name: unifi
+                key: UNIFI_HOST
+          - name: UNIFI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: unifi
+                key: UNIFI_API_KEY
+          - name: UNIFI_SKIP_TLS_VERIFY
+            value: "true"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+    triggerLoopOnEvent: true
+    policy: sync
+    sources:
+      - gateway-httproute
+      - service
+    txtOwnerId: main
+    domainFilters:
+      - ${DOMAIN}
+    serviceMonitor:
+      enabled: false
