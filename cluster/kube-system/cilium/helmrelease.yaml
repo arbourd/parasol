@@ -15,11 +15,8 @@ spec:
         namespace: flux-system
       interval: 5m
   values:
-    # bgp:
-    #   enabled: true
-    #   announce:
-    #     loadbalancerIP: true
-    #     podCIDR: true
+    bgpControlPlane:
+      enabled: true
 
     kubeProxyReplacement: true
     k8sServiceHost: localhost
