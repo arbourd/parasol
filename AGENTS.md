@@ -24,6 +24,7 @@
 
 - CNI: **none** (Talos-managed CNI disabled; Cilium handles this)
 - kube-proxy: **disabled** (Cilium eBPF replaces it)
+- BGP: enabled via Cilium
 - kubePrism: enabled on port `7445`
 - hostDNS: enabled, `forwardKubeDNSToHost: false`
 
@@ -49,9 +50,9 @@ Config is managed via [talhelper](https://github.com/budimanjojo/talhelper) usin
 
 **All `talosctl` and `talhelper` commands are reserved for manual execution by the cluster owner. Agents must not run any Talos commands.** This includes but is not limited to config generation, config application, upgrades, reboots, and resets.
 
-## GitOps / Flux
+## GitOps / FluxCD
 
-`cluster/` is reconciled by Flux. The directory structure follows standard Flux conventions with HelmReleases referencing HelmRepositories.
+`cluster/` is reconciled by FluxCD. The directory structure follows standard Flux conventions with HelmReleases referencing HelmRepositories.
 
 When upgrading a Helm chart:
 1. Update the chart version in the relevant `HelmRelease` manifest under `cluster/`
