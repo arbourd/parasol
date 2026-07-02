@@ -33,12 +33,31 @@
 ```
 .
 ├── cluster/              # Live cluster state (Flux-reconciled)
-├── deprecatedcluster/    # Reference only — previous cluster configuration, do not apply
-├── talconfig.yaml        # Talhelper config for node/cluster definition
+├── nodes/                # Talhelper config for node/cluster definition
 ├── .sops.yaml            # SOPS rules for secret encryption
 ├── diff.sh               # HelmRelease diff tool (used in PR review)
 └── .github/              # GitHub Actions workflows
 ```
+
+### Cluster Directory Structure
+
+Each application follows a consistent pattern:
+
+```
+cluster/
+├── kustomization.yaml         # Top-level: references each app directory
+├── flux-system/               # Flux bootstrap + HelmRepositories + cluster vars
+│   ├── helmrepositories/      # One HelmRepository per chart source
+│   └── cluster/               # cluster ConfigMap/Secret (postBuild substituteFrom)
+└── <app>/
+    ├── kustomization.yaml     # Includes only the Flux Kustomization object(s)
+    ├── <app>-ks.yaml          # Flux Kustomization → ./cluster/<app>/app
+    ├── [<app>-config-ks.yaml] # Optional second KS for CRD-dependent resources
+    ├── app/               # Namespace, Secret, HelmRelease
+    └── [config/]              # CRD-dependent resources (ClusterIssuer, etc.)
+```
+
+The `cluster` Flux Kustomization applies the top-level `kustomization.yaml`, which distributes per-app Flux Kustomization objects. Each app then reconciles independently. Apps that depend on CRDs from a HelmRelease (e.g. cert-manager) split into an `app/` KS with a healthCheck and a `config/` KS with `dependsOn`.
 
 ## Secrets
 
@@ -66,10 +85,6 @@ When upgrading a Helm chart:
 ```
 
 `diff.sh` requires `helm` and `yq` in `$PATH`.
-
-## `deprecatedcluster/`
-
-Historical reference for what ran on the previous cluster setup. Do not apply any manifests from this directory. It exists to inform migrations and understand what has changed.
 
 ## Required Tools
 
