@@ -41,23 +41,41 @@
 
 ### Cluster Directory Structure
 
-Each application follows a consistent pattern:
+The `cluster` Flux Kustomization applies the top-level `kustomization.yaml`, which distributes per-app Flux Kustomization objects. Each app then reconciles independently. Apps that depend on CRDs from a HelmRelease (e.g. cert-manager) split into an `app/` KS with a healthCheck and a `config/` KS with `dependsOn`.
 
 ```
 cluster/
-├── kustomization.yaml         # Top-level: references each app directory
-├── flux-system/               # Flux bootstrap + HelmRepositories + cluster vars
-│   ├── helmrepositories/      # One HelmRepository per chart source
-│   └── cluster/               # cluster ConfigMap/Secret (postBuild substituteFrom)
-└── <app>/
-    ├── kustomization.yaml     # Includes only the Flux Kustomization object(s)
-    ├── <app>-ks.yaml          # Flux Kustomization → ./cluster/<app>/app
-    ├── [<app>-config-ks.yaml] # Optional second KS for CRD-dependent resources
-    ├── app/               # Namespace, Secret, HelmRelease
-    └── [config/]              # CRD-dependent resources (ClusterIssuer, etc.)
+├── kustomization.yaml             # References each app's ks.yaml directly
+├── cert-manager/
+│   ├── ks.yaml                    # Flux KSes: cert-manager → app/, cert-manager-config → config/ (dependsOn cert-manager)
+│   ├── app/                       # namespace.yaml, secret.sops.yaml, helmrelease.yaml, kustomization.yaml
+│   └── config/                    # ClusterIssuer, Certificate (CRD-dependent resources)
+├── external-dns/                  # Same pattern; has secret.sops.yaml + postBuild; no config/ split
+│   ├── ks.yaml
+│   └── app/                       # namespace.yaml, secret.sops.yaml, helmrelease.yaml, kustomization.yaml
+├── flux-system/
+│   ├── cluster/                   # cluster ConfigMap + Secret (postBuild substituteFrom) + ks.yaml (root cluster KS)
+│   ├── gitrepositories/           # Git sources
+│   ├── helmrepositories/          # One HelmRepository per chart source
+│   └── ocirepositories/           # OCI chart sources
+├── kube-system/
+│   ├── kustomization.yaml         # References one subdir (local-path-provisioner/) + inline KS yaml files
+│   ├── cilium-ks.yaml             # Flux KS → ./cluster/kube-system/cilium
+│   ├── cilium/                    # helmrelease.yaml, kustomization.yaml (no namespace.yaml)
+│   ├── cilium-bgp-ks.yaml
+│   ├── cilium-bgp/                # CiliumBGPClusterConfig, CiliumBGPPeerConfig, CiliumBGPAdvertisement, CiliumLoadBalancerIPPool
+│   ├── gateway-api-ks.yaml        # Points at gateway-api GitRepository, not this repo
+│   ├── multus-ks.yaml
+│   ├── multus/
+│   └── local-path-provisioner/    # No separate -ks.yaml; HelmRelease applied inline by cluster KS (no independent Flux Kustomization object)
+└── scrypted/
+    ├── ks.yaml
+    └── app/                       # namespace.yaml, helmrelease.yaml, kustomization.yaml
 ```
 
-The `cluster` Flux Kustomization applies the top-level `kustomization.yaml`, which distributes per-app Flux Kustomization objects. Each app then reconciles independently. Apps that depend on CRDs from a HelmRelease (e.g. cert-manager) split into an `app/` KS with a healthCheck and a `config/` KS with `dependsOn`.
+The `cluster` Flux Kustomization (defined in `cluster/flux-system/cluster/ks.yaml`) applies the top-level `kustomization.yaml`, which references each app's `ks.yaml` directly (or the `kube-system/` directory). Each app reconciles independently via the Flux Kustomization objects in those files. Apps that depend on CRDs from a HelmRelease (e.g. cert-manager) define two KSes in a single `ks.yaml`: an `app/` KS with a healthCheck and a `config/` KS with `dependsOn`. The `kube-system` subtree uses `kube-system` namespace directly (no per-app namespace manifest).
+
+**Important:** the root `cluster` Kustomization has `prune: false`. Removing an app directory from `cluster/kustomization.yaml` does **not** garbage-collect its child Kustomization objects — those must be deleted manually.
 
 ## Secrets
 

@@ -23,9 +23,3 @@ spec:
       kind: HelmRelease
       name: cilium
       namespace: kube-system
-  postBuild:
-    substituteFrom:
-      - kind: ConfigMap
-        name: cluster
-      - kind: Secret
-        name: cluster
