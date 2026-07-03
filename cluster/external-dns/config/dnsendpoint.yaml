@@ -1,0 +1,19 @@
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: unifi
+  namespace: external-dns
+spec:
+  endpoints:
+    - dnsName: unifi.${DOMAIN}
+      recordType: A
+      targets:
+        - 10.128.0.1
+    - dnsName: drive.${DOMAIN}
+      recordType: A
+      targets:
+        - 10.128.0.2
+    - dnsName: protect.${DOMAIN}
+      recordType: A
+      targets:
+        - 10.128.0.3
