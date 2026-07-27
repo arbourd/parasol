@@ -6,8 +6,8 @@
 
 ## Cluster
 
-- **OS**: Talos Linux v1.12.2
-- **Kubernetes**: v1.35.0
+- **OS**: Talos Linux (version pinned in `nodes/talconfig.yaml`)
+- **Kubernetes**: version pinned in `nodes/talconfig.yaml`
 - **Topology**: Single node (`node-01`, `10.128.1.140`), control plane with `allowSchedulingOnControlPlanes: true`
 - **Endpoint**: `https://10.128.1.140:6443`
 - **Install disk**: `/dev/nvme0n1`
@@ -50,9 +50,10 @@ cluster/
 │   ├── ks.yaml                    # Flux KSes: cert-manager → app/, cert-manager-config → config/ (dependsOn cert-manager)
 │   ├── app/                       # namespace.yaml, secret.sops.yaml, helmrelease.yaml, kustomization.yaml
 │   └── config/                    # ClusterIssuer, Certificate (CRD-dependent resources)
-├── external-dns/                  # Same pattern; has secret.sops.yaml + postBuild; no config/ split
-│   ├── ks.yaml
-│   └── app/                       # namespace.yaml, secret.sops.yaml, helmrelease.yaml, kustomization.yaml
+├── external-dns/                  # Same app/config split as cert-manager; also has secret.sops.yaml + postBuild
+│   ├── ks.yaml                    # Flux KSes: external-dns → app/, external-dns-config → config/ (dependsOn external-dns)
+│   ├── app/                       # namespace.yaml, secret.sops.yaml, helmrelease.yaml, kustomization.yaml
+│   └── config/                    # DNSEndpoint (CRD-dependent resource)
 ├── flux-system/
 │   ├── cluster/                   # cluster ConfigMap + Secret (postBuild substituteFrom) + ks.yaml (root cluster KS)
 │   ├── gitrepositories/           # Git sources
@@ -81,6 +82,8 @@ The `cluster` Flux Kustomization (defined in `cluster/flux-system/cluster/ks.yam
 
 Secrets are encrypted with [SOPS](https://github.com/getsops/sops). Rules are defined in `.sops.yaml`. Never commit plaintext secrets. Decrypt with `sops` before editing encrypted files; re-encrypt before committing.
 
+A pre-commit hook (`.githooks/pre-commit`) blocks committing any manifest with `kind: Secret` that isn't SOPS-encrypted.
+
 ## Talos Node Management
 
 Config is managed via [talhelper](https://github.com/budimanjojo/talhelper) using `talconfig.yaml`.
@@ -104,6 +107,14 @@ When upgrading a Helm chart:
 
 `diff.sh` requires `helm` and `yq` in `$PATH`.
 
+## Testing
+
+```bash
+bats tests/   # requires bats in $PATH; runs on every push in CI (ci.yml)
+```
+
+Covers `diff.sh` (`tests/diff.bats`) and the pre-commit secrets hook (`tests/pre_commit.bats`).
+
 ## Required Tools
 
 | Tool | Purpose |
@@ -119,7 +130,6 @@ When upgrading a Helm chart:
 ## What Agents Must Not Do
 
 - Run any `talosctl` or `talhelper` command — these are manual-only.
-- Modify `deprecatedcluster/` — it is read-only reference material.
 - Commit decrypted secrets or kubeconfigs.
 - Edit `talconfig.yaml` extensions without a comment noting the change for the owner to apply.
 - Delete PVCs or persistent storage resources without explicit instruction — data loss is not recoverable on a single-node cluster.
