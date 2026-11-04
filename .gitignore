@@ -1,3 +1,7 @@
 *.agekey
 clusterconfig
 talsecret.sops.yaml
+
+# entire hooks
+.githooks/*
+!.githooks/pre-commit
