@@ -73,6 +73,8 @@ Config is managed with [talhelper](https://github.com/budimanjojo/talhelper) via
 
 After changing anything under `.github/workflows/`, run `actionlint`.
 
+After changing `.github/renovate.json`, run `npx --yes --package renovate -- renovate-config-validator --strict`.
+
 ## Tools
 
 `kubectl`, `flux`, `sops`, `helm`, `yq`, `bats`.
