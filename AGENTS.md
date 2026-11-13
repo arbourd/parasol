@@ -71,6 +71,8 @@ Config is managed with [talhelper](https://github.com/budimanjojo/talhelper) via
 
 `bats tests/` covers `diff.sh` (`tests/diff.bats`) and the pre-commit hook (`tests/pre_commit.bats`).
 
+After changing anything under `.github/workflows/`, run `actionlint`.
+
 ## Tools
 
 `kubectl`, `flux`, `sops`, `helm`, `yq`, `bats`.
