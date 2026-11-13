@@ -3,10 +3,10 @@
   "extends": ["helpers:pinGitHubActionDigestsToSemver"],
   "enabledManagers": ["custom.regex", "flux", "github-actions", "helm-values"],
   "flux": {
-    "fileMatch": ["^cluster/.+\\.yaml$"]
+    "managerFilePatterns": ["/^cluster\/.+\\.yaml$/"]
   },
   "helm-values": {
-    "fileMatch": ["^cluster/.+/helmrelease\\.yaml$"]
+    "managerFilePatterns": ["/^cluster\/.+\/helmrelease\\.yaml$/"]
   },
   "customManagers": [
     {
