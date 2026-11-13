@@ -11,8 +11,8 @@ jobs:
   files:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: dorny/paths-filter@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4
         id: filter
         with:
           list-files: json
@@ -31,13 +31,13 @@ jobs:
         file: ${{ fromJSON(needs.files.outputs.yaml_files) }}
 
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: main
           path: main
 
-      - uses: azure/setup-helm@v5
+      - uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5
         with:
           version: latest
 
@@ -50,14 +50,14 @@ jobs:
           echo "${diff}" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - uses: peter-evans/find-comment@v4
+      - uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4
         id: find-comment
         with:
           issue-number: "${{ github.event.pull_request.number }}"
           comment-author: "github-actions[bot]"
           body-includes: helmrelease.yaml
 
-      - uses: peter-evans/create-or-update-comment@v5
+      - uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           comment-id: "${{ steps.find-comment.outputs.comment-id }}"
